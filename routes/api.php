@@ -14,6 +14,7 @@ Route::resource('comments', CommentController::class);
 Route::resource('likes', LikeController::class);
 Route::resource('mentions', MentionController::class);
 Route::get('/artworks', [ArtworkController::class, 'index']);
+Route::post('/login', [UserController::class, 'store'])->name('login');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

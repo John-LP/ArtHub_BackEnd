@@ -2,61 +2,63 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class RequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+    
+        // Recherche d'un utilisateur avec l'email fourni dans la table 'users'
+        $user = User::where('email', $credentials['email'])->first();
+
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+
+            $token = $user->createToken('authToken')->plainTextToken;
+    
+            return response()->json([
+                'token' => $token,
+                'user' => $user,
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => 'Informations invalides',
+            ], 401);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $Request)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Request $Request)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $Request)
     {
         //
